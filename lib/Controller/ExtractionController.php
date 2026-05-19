@@ -7,8 +7,6 @@ namespace OCA\Extract\Controller;
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
-// Only in order to access Filesystem::isFileBlacklisted().
-use OC\Files\Filesystem;
 use OCA\Extract\ResponseDefinitions;
 
 use OCA\Extract\Service\ExtractionService;
@@ -18,6 +16,7 @@ use OCP\AppFramework\Http\Attribute\NoAdminRequired;
 use OCP\AppFramework\Http\DataResponse;
 use OCP\Encryption\IManager;
 use OCP\Files\Folder;
+use OCP\Files\IFilenameValidator;
 
 use OCP\Files\InvalidPathException;
 
@@ -59,6 +58,7 @@ final class ExtractionController extends AEnvironmentAwareController {
 		private IManager $encryptionManager,
 		private string $userId,
 		private IURLGenerator $urlGenerator,
+		private IFilenameValidator $filenameValidator,
 	) {
 		parent::__construct($AppName, $request);
 		$this->userFolder = $this->rootFolder->getUserFolder($this->userId);
@@ -87,7 +87,7 @@ final class ExtractionController extends AEnvironmentAwareController {
 		$iterator = new \RecursiveIteratorIterator(new \RecursiveDirectoryIterator($extractTo));
 		foreach ($iterator as $file) {
 			/** @var \SplFileInfo $file */
-			if (Filesystem::isFileBlacklisted($file->getBasename())) {
+			if (!$this->filenameValidator->isFilenameValid($file->getBasename())) {
 				$this->logger->warning(__METHOD__ . ': removing blacklisted file: ' . $file->getPathname());
 				// remove it
 				unlink($file->getPathname());
