@@ -3,22 +3,6 @@
   "plugins": [
     "@semantic-release/commit-analyzer",
     "@semantic-release/release-notes-generator",
-    [
-      "@semantic-release/exec",
-      {
-        "prepareCmd": "make npm version=${nextRelease.version} appstore"
-      }
-    ],
-    [
-      "@semantic-release/github",
-      {
-        "assets": [
-          {
-            "path": "build/artifacts/appstore/extract-${nextRelease.version}.tar.gz",
-            "label": "Nextcloud App Package"
-          }
-        ]
-      }
-    ]
+    "@semantic-release/github"
   ]
 }
