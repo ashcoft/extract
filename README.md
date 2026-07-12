@@ -85,3 +85,9 @@ sudo rpm -U --quiet p7zip-plugins-16.02-10.el6.x86_64.rpm
 ## Preview
 
 ![alt text](https://raw.githubusercontent.com/PaulLereverend/NextcloudExtract/master/img/extract.png)
+
+## Roadmap
+
+- [ ] Feature 1
+- [ ] Feature 2
+
