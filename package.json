@@ -22,7 +22,10 @@
     "watch": "vite build --mode development --watch"
   },
   "browserslist": [
-    "extends @nextcloud/browserslist-config"
+    "extends @nextcloud/browserslist-config",
+    "not chrome 109",
+    "not edge 109",
+    "not ios_saf 11"
   ],
   "dependencies": {
     "@mdi/svg": "^7.4.47",
@@ -40,7 +43,7 @@
     "esbuild-loader": "^4.3.0",
     "openapi-typescript": "^7.9.1",
     "ts-loader": "^9.5.4",
-    "vite": "^7.1.5"
+    "vite": "^7.3.5"
   },
   "engines": {
     "node": "^22.0.0",
