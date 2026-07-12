@@ -10,6 +10,11 @@
   "browser": {
     "fs": false
   },
+  // Known security advisory: elliptic <= 6.6.1 (CVE pending)
+  // Transitive dependency via @nextcloud/vite-config -> vite-plugin-node-polyfills -> crypto-browserify -> elliptic
+  // No patched version available yet. This is only used in dev/build tooling, not production runtime.
+  // Update this override when a patched version of elliptic becomes available.
+  "overrides": {},
   "scripts": {
     "build": "vite build --mode production",
     "dev": "vite build --mode development",
