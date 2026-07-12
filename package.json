@@ -43,7 +43,7 @@
     "esbuild-loader": "^4.3.0",
     "openapi-typescript": "^7.9.1",
     "ts-loader": "^9.5.4",
-    "vite": "^7.3.5"
+    "vite": "^8.1.4"
   },
   "engines": {
     "node": "^22.0.0",
