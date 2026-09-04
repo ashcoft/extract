@@ -27,6 +27,9 @@
     "not edge 109",
     "not ios_saf 11"
   ],
+  "overrides": {
+    "js-yaml": "4.3.2"
+  },
   "dependencies": {
     "@mdi/svg": "^7.4.47",
     "@nextcloud/axios": "^2.6.0",
