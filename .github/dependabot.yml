@@ -50,6 +50,20 @@ updates:
       - dependency-name: elliptic
         versions:
           - "<=6.6.1"
+      # TypeScript majors break the lint toolchain. A major bump (for example
+      # 5.9.3 -> 7.0.2) makes `npm ci` fail with ERESOLVE and leaves eslint
+      # hanging, because:
+      #   - openapi-typescript peer-requires typescript@^5.x, and
+      #   - @typescript-eslint/parser (via typescript-eslint) peer-requires
+      #     typescript >=4.8.4 <6.1.0, and crashes on TypeScript 7 with
+      #     "Cannot read properties of undefined (reading 'Cjs')".
+      # Neither package supports TypeScript 7 yet, at any published version.
+      # Ignoring majors still allows minor and patch updates within 5.x. Remove
+      # this entry once typescript-eslint and openapi-typescript raise their
+      # TypeScript caps.
+      - dependency-name: typescript
+        update-types:
+          - "version-update:semver-major"
 
   - package-ecosystem: github-actions
     directory: /
