@@ -53,14 +53,16 @@ jobs:
 
       # Enable auto-merge on the PR.
       #
-      # This requires the DEPENDABOT_AUTOMERGE_TOKEN secret (a token belonging
-      # to a user or app with merge rights, since GITHUB_TOKEN merges do not
-      # trigger downstream workflows) and a .github/auto-merge.yml file. When
-      # the secret is absent the action exits with
-      # "Input required and not supplied: github-token".
+      # This requires the DEPENDABOT_AUTOMERGE_TOKEN secret: a token belonging to
+      # a user or app with merge rights, because a merge performed with
+      # GITHUB_TOKEN does not trigger downstream workflows.
       #
-      # Skipped rather than failed when the secret is unset, so a repository
-      # that has not configured it still gets the approval above.
+      # `.github/auto-merge.yml` is optional. The action reads it when present;
+      # otherwise it falls back to the `target` input above (see
+      # action/lib/config.js). No config file is needed for the default.
+      #
+      # Skipped rather than failed when the secret is unset, so a repository that
+      # has not configured it still gets the approval above.
       - name: Check the auto-merge token
         id: automerge-token
         run: |
