@@ -3,9 +3,11 @@
 #
 # Dependabot configuration.
 #
-# The `ignore` entries below cover two advisories that cannot be fixed from this
-# repository. Dependabot's update job fails when it cannot produce a security
-# update, so leaving them enabled turns every run red:
+# The `ignore` entries below cover three things, for two different reasons.
+#
+# Two are advisories that cannot be fixed from this repository. Dependabot's
+# update job fails when it cannot produce a security update, so leaving them
+# enabled turns every run red:
 #
 #   undici 6.29.0  - reached only through semantic-release -> @semantic-release/npm
 #                    -> npm -> node-gyp. npm vendors this dependency inside its own
@@ -20,8 +22,10 @@
 #                    Dependabot reports: "Security update not found for elliptic ...
 #                    dependency is up to date but still vulnerable".
 #
-# Revisit both when npm ships a patched undici, or when a patched elliptic is
-# published. The corresponding Dependabot alerts stay open as a reminder.
+# Revisit the two advisories when npm ships a patched undici, or when a patched
+# elliptic is published. The third entry is a version-policy pin, not a
+# vulnerability waiver: it holds TypeScript at 5.x until the lint toolchain
+# supports a newer major. See the comment on that entry.
 version: 2
 updates:
   - package-ecosystem: npm
@@ -58,12 +62,18 @@ updates:
       #     typescript >=4.8.4 <6.1.0, and crashes on TypeScript 7 with
       #     "Cannot read properties of undefined (reading 'Cjs')".
       # Neither package supports TypeScript 7 yet, at any published version.
-      # Ignoring majors still allows minor and patch updates within 5.x. Remove
-      # this entry once typescript-eslint and openapi-typescript raise their
-      # TypeScript caps.
+      #
+      # This uses `versions` rather than `update-types`: per the Dependabot docs,
+      # "update-types only affects version updates, not security updates", so an
+      # `update-types: [version-update:semver-major]` entry would still let a
+      # TypeScript security update propose 7.x and break the toolchain. `versions`
+      # is not exempt, so it covers both kinds of update.
+      #
+      # 5.x minor and patch updates still flow through. Delete this entry once
+      # typescript-eslint and openapi-typescript raise their TypeScript caps.
       - dependency-name: typescript
-        update-types:
-          - "version-update:semver-major"
+        versions:
+          - ">=6.0.0"
 
   - package-ecosystem: github-actions
     directory: /
