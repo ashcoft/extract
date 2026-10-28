@@ -37,20 +37,42 @@ jobs:
           echo 'Can not approve PRs from forks'
           exit 1
 
-      # GitHub actions bot approve
-      # Best-effort: GITHUB_TOKEN cannot approve PRs when the repo setting
-      # "Allow GitHub Actions to create and approve pull requests" is disabled,
-      # so tolerate failure (Mergify queue handles the actual merge in this repo).
+      # Approve the Dependabot PR so it can enter the merge queue.
+      #
+      # This needs the repository setting "Allow GitHub Actions to create and
+      # approve pull requests" (Actions -> General -> Workflow permissions).
+      # Without it the action fails with "GitHub Actions is not permitted to
+      # approve pull requests" and no PR is ever approved, which leaves every
+      # Dependabot PR waiting for review indefinitely.
+      #
+      # Deliberately NOT continue-on-error: a silent failure here is what hid
+      # this breakage. If approval stops working, the check should go red.
       - uses: hmarr/auto-approve-action@b40d6c9ed2fa10c9a2749eca7eb004418a705501 # v2
-        continue-on-error: true
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
 
-      # Nextcloud bot approve and merge request
-      # Best-effort: requires the DEPENDABOT_AUTOMERGE_TOKEN secret; tolerate
-      # failures so the check stays green instead of blocking Dependabot PRs.
+      # Enable auto-merge on the PR.
+      #
+      # This requires the DEPENDABOT_AUTOMERGE_TOKEN secret (a token belonging
+      # to a user or app with merge rights, since GITHUB_TOKEN merges do not
+      # trigger downstream workflows) and a .github/auto-merge.yml file. When
+      # the secret is absent the action exits with
+      # "Input required and not supplied: github-token".
+      #
+      # Skipped rather than failed when the secret is unset, so a repository
+      # that has not configured it still gets the approval above.
+      - name: Check the auto-merge token
+        id: automerge-token
+        run: |
+          if [ -n "${{ secrets.DEPENDABOT_AUTOMERGE_TOKEN }}" ]; then
+            echo "configured=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "configured=false" >> "$GITHUB_OUTPUT"
+            echo "::notice::DEPENDABOT_AUTOMERGE_TOKEN is not set; skipping auto-merge. Approval still applies."
+          fi
+
       - uses: ahmadnassri/action-dependabot-auto-merge@45fc124d949b19b6b8bf6645b6c9d55f4f9ac61a # v2
-        continue-on-error: true
+        if: steps.automerge-token.outputs.configured == 'true'
         with:
           target: minor
           github-token: ${{ secrets.DEPENDABOT_AUTOMERGE_TOKEN }}
