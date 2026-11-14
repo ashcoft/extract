@@ -16,3 +16,5 @@ node_modules/
 
 /.php-cs-fixer.cache
 /tests/.phpunit.cache
+.agent/dist/
+.agent/node_modules/
